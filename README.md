@@ -15,5 +15,5 @@
 
 ## Branches
 
-- main: integrated ipc (WIP)
+- main: integrated ipcs (WIP)
 - plain: only shows windows
