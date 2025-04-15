@@ -5,7 +5,7 @@
 
 ## dependencies
 
-- electron-forge: 7.6.0
+- electron-forge: 7.8.0
 
 ## directory structure
 
@@ -13,4 +13,7 @@
 - main_window: render process 1
 - sub_window: render process 2
 
+## Branches
 
+- main: integrated ipc (WIP)
+- plain: only shows windows
