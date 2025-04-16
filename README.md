@@ -16,4 +16,5 @@
 ## Branches
 
 - main: integrated ipcs (WIP)
+  - unit/ui/setting channel
 - plain: only shows windows

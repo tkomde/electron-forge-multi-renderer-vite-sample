@@ -1,17 +1,38 @@
 import { app, BrowserWindow } from 'electron';
 import path from 'node:path';
 import started from 'electron-squirrel-startup';
+import Store from 'electron-store'; // electron-storeをインポート
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (started) {
   app.quit();
 }
 
+
+// 設定のデフォルト値を設定
+const defaults = {
+	Hoo: 0,
+  ver: {
+    dam: 22
+  }
+};
+
+const store = new Store({defaults});
+
+console.log(store.get('Hoo'));
+store.set('Hoo', store.get('Hoo') + 1)
+console.log(store.get('Hoo'));
+console.log(store.get('ver.dam'));
+
+store.set('ver.dam', 21)
+//store.set('app_settings', { width: app_settings.width + 10, height: app_settings.height + 5});
+
 const createWindow = () => {
+
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 640,
+    height: 480,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
     },
