@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, ipcMain } from 'electron';
 import path from 'node:path';
 import started from 'electron-squirrel-startup';
 import Store from 'electron-store'; // electron-storeをインポート
@@ -11,21 +11,18 @@ if (started) {
 
 // 設定のデフォルト値を設定
 const defaults = {
-	Hoo: 0,
-  ver: {
-    dam: 22
+	"settings": {
+    aaa: 22
   }
 };
 
 const store = new Store({defaults});
 
-console.log(store.get('Hoo'));
-store.set('Hoo', store.get('Hoo') + 1)
-console.log(store.get('Hoo'));
-console.log(store.get('ver.dam'));
-
-store.set('ver.dam', 21)
-//store.set('app_settings', { width: app_settings.width + 10, height: app_settings.height + 5});
+let settings = store.get('settings')
+/**
+console.log(store.get('settings.dam'));
+ */
+//store.set('settings.dam', 21)
 
 const createWindow = () => {
 
@@ -99,3 +96,23 @@ app.on('window-all-closed', () => {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
+
+/**
+ * 設定の相互同期
+ */
+// 設定取得
+ipcMain.handle('get-settings', () => settings);
+
+// 設定更新
+function setSettings(diff) {
+  settings = { ...settings, ...diff };
+  console.log(settings);
+  // 全rendererに通知
+  BrowserWindow.getAllWindows().forEach(win => {
+    win.webContents.send('settings-channel', settings);
+  });
+}
+
+ipcMain.on('set-settings', (event, diff) => {
+  setSettings(diff);
+});

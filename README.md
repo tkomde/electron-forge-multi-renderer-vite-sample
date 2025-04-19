@@ -15,6 +15,5 @@
 
 ## Branches
 
-- main: integrated ipcs (WIP)
-  - unit/ui/setting channel
+- main: auto sync settings between main/renderers
 - plain: only shows windows

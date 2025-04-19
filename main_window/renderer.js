@@ -29,3 +29,17 @@
 import './index.css';
 
 console.log('👋 This message is being logged by "main_window/renderer.js", included via Vite');
+
+/**
+ * sync settings
+ */
+
+import { settings, initSettingsSync } from '../common/settingsSync';
+
+//callback function for main_window
+function settingsUpdateCallback(settings) {
+  // ex: UI update
+  console.log('Settings updated to UI:', settings);
+}
+
+initSettingsSync(settingsUpdateCallback);
