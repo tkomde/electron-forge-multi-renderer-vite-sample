@@ -26,20 +26,26 @@
  * ```
  */
 
-import './index.css';
+import "./index.css";
 
-console.log('👋 This message is being logged by "sub_window/renderer.js", included via Vite');
+console.log(
+  '👋 This message is being logged by "sub_window/renderer.js", included via Vite'
+);
 
 /**
  * sync settings
  */
 
-import { settings, initSettingsSync } from '../common/settingsSync';
+import { initSettingsSync, setSettings } from "../common/settingsSync";
+
+//to test from console
+window.setSettings = setSettings;
 
 //callback function for sub_window
 function settingsUpdateCallback(settings) {
   // ex: UI update
-  console.log('Settings updated to UI:', settings);
+  console.log("Settings updated to UI:", settings);
 }
 
 initSettingsSync(settingsUpdateCallback);
+// to test from console

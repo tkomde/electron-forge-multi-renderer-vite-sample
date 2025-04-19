@@ -1,37 +1,35 @@
-import { app, BrowserWindow, ipcMain } from 'electron';
-import path from 'node:path';
-import started from 'electron-squirrel-startup';
-import Store from 'electron-store'; // electron-storeをインポート
+import { app, BrowserWindow, ipcMain } from "electron";
+import path from "node:path";
+import started from "electron-squirrel-startup";
+import Store from "electron-store"; // electron-storeをインポート
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (started) {
   app.quit();
 }
 
-
 // 設定のデフォルト値を設定
 const defaults = {
-	"settings": {
-    aaa: 22
-  }
+  settings: {
+    aaa: 22,
+  },
 };
 
-const store = new Store({defaults});
+const store = new Store({ defaults });
 
-let settings = store.get('settings')
+let settings = store.get("settings");
 /**
 console.log(store.get('settings.dam'));
  */
 //store.set('settings.dam', 21)
 
 const createWindow = () => {
-
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     width: 640,
     height: 480,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
+      preload: path.join(__dirname, "preload.js"),
     },
   });
 
@@ -39,14 +37,14 @@ const createWindow = () => {
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
     mainWindow.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL);
   } else {
-    mainWindow.loadFile(path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`));
+    mainWindow.loadFile(
+      path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`)
+    );
   }
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
 };
-
-
 
 const createSubWindow = () => {
   // Create the browser window.
@@ -54,7 +52,7 @@ const createSubWindow = () => {
     width: 600,
     height: 400,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
+      preload: path.join(__dirname, "preload.js"),
     },
   });
 
@@ -62,7 +60,9 @@ const createSubWindow = () => {
   if (SUB_WINDOW_VITE_DEV_SERVER_URL) {
     subWindow.loadURL(SUB_WINDOW_VITE_DEV_SERVER_URL);
   } else {
-    subWindow.loadFile(path.join(__dirname, `../renderer/${SUB_WINDOW_VITE_NAME}/index.html`));
+    subWindow.loadFile(
+      path.join(__dirname, `../renderer/${SUB_WINDOW_VITE_NAME}/index.html`)
+    );
   }
 
   // Open the DevTools.
@@ -78,7 +78,7 @@ app.whenReady().then(() => {
 
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
-  app.on('activate', () => {
+  app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) {
       createWindow();
     }
@@ -88,8 +88,8 @@ app.whenReady().then(() => {
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
+app.on("window-all-closed", () => {
+  if (process.platform !== "darwin") {
     app.quit();
   }
 });
@@ -101,18 +101,19 @@ app.on('window-all-closed', () => {
  * 設定の相互同期
  */
 // 設定取得
-ipcMain.handle('get-settings', () => settings);
+ipcMain.handle("get-settings", () => settings);
 
 // 設定更新
 function setSettings(diff) {
   settings = { ...settings, ...diff };
-  console.log(settings);
+  store.set("settings", settings);
+  console.log(`settings stored: ${JSON.stringify(settings)}`);
   // 全rendererに通知
-  BrowserWindow.getAllWindows().forEach(win => {
-    win.webContents.send('settings-channel', settings);
+  BrowserWindow.getAllWindows().forEach((win) => {
+    win.webContents.send("settings-channel", settings);
   });
 }
 
-ipcMain.on('set-settings', (event, diff) => {
+ipcMain.on("set-settings", (event, diff) => {
   setSettings(diff);
 });
