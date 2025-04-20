@@ -11,15 +11,15 @@ if (started) {
 // 設定のデフォルト値を設定
 const defaults = {
   settings: {
-    aaa: 22,
+    main_elem: 22,
   },
 };
 
 const store = new Store({ defaults });
 
 let settings = store.get("settings");
+console.log(`store: ${JSON.stringify(store.get("settings"))}`);
 /**
-console.log(store.get('settings.dam'));
  */
 //store.set('settings.dam', 21)
 
@@ -98,19 +98,26 @@ app.on("window-all-closed", () => {
 // code. You can also put them in separate files and import them here.
 
 /**
- * 設定の相互同期
+ * Sync settings between main and renderer processes
  */
-// 設定取得
+// request settings
 ipcMain.handle("get-settings", () => settings);
 
 // 設定更新
 function setSettings(diff) {
   settings = { ...settings, ...diff };
-  store.set("settings", settings);
-  console.log(`settings stored: ${JSON.stringify(settings)}`);
+
+  // diffオブジェクトからキーが "main_" で始まるものだけを抽出
+  const filteredDiff = Object.fromEntries(
+    Object.entries(settings).filter(([key]) => key.startsWith("main_"))
+  );
+
+  store.set("settings", filteredDiff);
+  console.log(`settings stored in main: ${JSON.stringify(filteredDiff)}`);
+
   // 全rendererに通知
   BrowserWindow.getAllWindows().forEach((win) => {
-    win.webContents.send("settings-channel", settings);
+    win.webContents.send("set-settings", settings);
   });
 }
 

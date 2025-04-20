@@ -9,7 +9,7 @@ export function initSettingsSync(settingsUpdateCallback, api = window.api) {
   });
 
   // notify updates from main process
-  api.on("settings-channel", (_event, newSettings) => {
+  api.on("set-settings", (_event, newSettings) => {
     settings = newSettings;
     settingsUpdateCallback(settings);
   });
